@@ -5,7 +5,7 @@ class Game
     @code = %w[1 2 3 4]
   end
 
-  def playRound
+  def play_round
     input = @player.input
     results = check_guess(input)
   end
@@ -13,16 +13,17 @@ class Game
   def check_guess(input)
     colored_pegs = 0
     white_pegs = 0
-    input.each_with_index do |number,index|
-        colored_pegs += 1 if @code[index] == number
+    input.each_with_index do |number, index|
+      colored_pegs += 1 if @code[index] == number
 
-        if @code[index] == number
-            colored_pegs += 1
-        else @code.include? number
-            white_pegs += 1
-        end
+      if @code[index] == number
+        colored_pegs += 1
+      else
+        @code.include? number
+        white_pegs += 1
+      end
     end
-    [colored_pegs,white_pegs]
+    [colored_pegs, white_pegs]
   end
 end
 
