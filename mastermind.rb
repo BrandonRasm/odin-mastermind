@@ -1,8 +1,10 @@
 # Base class the runs all the logic and handles turns
 class Game
   def initialize
-    @player = Human.new
-    @code = %w[1 2 3 4]
+    puts "To play as the codebreaker type '1'."
+    puts 'To make your own code type literally anything else'
+    choice = gets.chomp
+    choice == 1 ? human_breaker_setup : comp_breaker_setup
   end
 
   def play_game
@@ -47,11 +49,52 @@ class Game
     puts "Colored pegs: #{results[0]}"
     puts "White pegs: #{results[1]}"
   end
+
+  def generate_random_code
+    code = [0, 0, 0, 0]
+    code = code.map { rand(1..6).to_s }
+    p code
+    code
+  end
+
+  def generate_player_code
+    valid = false
+    until valid
+      puts "Input a secret code, but don't say it out loud(the computer can hear you)"
+      puts 'The code must be 4 numbers long from 1-6'
+      guess = gets.chomp.split('')
+      valid = @player.valid_guess?(guess)
+      puts 'You idiot!' unless valid
+    end
+    guess
+  end
+
+  def human_breaker_setup
+    @player = Human.new
+    @code = generate_random_code
+  end
+
+  def comp_breaker_setup
+    @player = Comp.new
+    @code = generate_player_code
+  end
 end
 
 # Basic class that gets input from the player and stores info about them
 class Player
   def initialize; end
+
+  def valid_guess?(guess)
+    return false unless guess.length == 4
+
+    guess.each do |number|
+      number = number.to_i
+      return false unless number.is_a? Integer
+
+      return false if number > 6 || number < 1
+    end
+    true
+  end
 end
 
 # A human player
@@ -65,18 +108,6 @@ class Human < Player
       puts 'You idiot!' unless valid
     end
     guess
-  end
-
-  def valid_guess?(guess)
-    guess.each do |number|
-      number = number.to_i
-      return false unless number.is_a? Integer
-
-      return false if number > 6 || number < 1
-
-      return false unless guess.length == 4
-    end
-    true
   end
 
   def show_instructions
