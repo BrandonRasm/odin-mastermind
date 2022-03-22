@@ -142,12 +142,13 @@ class Comp < Player
   end
 
   def random_guessing
+    guess = 0
     loop do
       guess = @found_numbers.sample(4)
       break unless @guesses.include?(guess)
     end
     @guesses.push(guess)
-    guess.to_s
+    guess.join.split('')
   end
 
   def brute_force_number_checking
@@ -160,11 +161,10 @@ class Comp < Player
   end
 
   def process_results(results)
-    p results
     unless @all_white_pegs_found
-      # results[1] will be the count of white pegs from recent guess
+      # will find the total amount of pegs from recent guess
       # replaces first instance of a 0 in foundnumbers array with recent_number_checked that many times
-      results[1].times do
+      (results[0] + results[1]).times do
         @found_numbers[@found_numbers.index(0)] = @recent_number_checked
       end
     end
