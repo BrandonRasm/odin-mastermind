@@ -110,7 +110,6 @@ class Human < Player
     puts 'Colored pegs mean you have the correct number and placement'
     puts 'White pegs mean correct number but incorrect placement'
   end
-
   def process_results(results)
     puts "Colored pegs: #{results[0]}"
     puts "White pegs: #{results[1]}"
@@ -123,7 +122,7 @@ class Comp < Player
     @recent_number_checked = 0
     @found_numbers = [0, 0, 0, 0]
     @all_white_pegs_found = false
-    @recent_guesses = []
+    @guesses = []
     super
   end
 
@@ -131,16 +130,46 @@ class Comp < Player
     puts 'The computer will now try to guess your code. Good Luck!'
   end
 
+  def input
+    p @found_numbers
+    guess = if @all_white_pegs_found
+              random_guessing
+            else
+              brute_force_number_checking
+            end
+    display_computer_guess(guess)
+    guess
+  end
+
+  def random_guessing
+    loop do
+      guess = @found_numbers.sample(4)
+      break unless @guesses.include?(guess)
+    end
+    @guesses.push(guess)
+    guess.to_s
+  end
+
+  def brute_force_number_checking
+    @recent_number_checked += 1
+    [@recent_number_checked.to_s, @recent_number_checked.to_s, @recent_number_checked.to_s, @recent_number_checked.to_s]
+  end
+
+  def display_computer_guess(guess)
+    puts "The computer guessed #{guess}"
+  end
+
   def process_results(results)
-    unless all_white_pegs_found
+    p results
+    unless @all_white_pegs_found
       # results[1] will be the count of white pegs from recent guess
       # replaces first instance of a 0 in foundnumbers array with recent_number_checked that many times
       results[1].times do
-        found_numbers[found_numbers.index(0)] = recent_number_checked
+        @found_numbers[@found_numbers.index(0)] = @recent_number_checked
       end
     end
 
-    all_white_pegs_found = !found_numbers.include?(0)
+    @all_white_pegs_found = !@found_numbers.include?(0)
   end
 end
 
