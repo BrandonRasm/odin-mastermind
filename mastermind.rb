@@ -29,26 +29,38 @@ class Game
   end
 
   def check_guess(input)
-    colored_pegs = 0
-    white_pegs = 0
+    results = [0, 0]
     code_copy = @code.dup
+    results[0] = count_colored_pegs(input, code_copy)
+    results[1] = count_white_pegs(input, code_copy)
+    results
+  end
+
+  def count_colored_pegs(input, code_copy)
+    count = 0
     input.each_with_index do |number, index|
       if code_copy[index] == number
-        colored_pegs += 1
+        count += 1
         code_copy[index] = 0
+      end
+    end
+    count
+  end
 
-      elsif  code_copy.include? number
-        white_pegs += 1
+  def count_white_pegs(input, code_copy)
+    count = 0
+    input.each do |number|
+      if code_copy.include? number
+        count += 1
         code_copy[code_copy.find_index(number)] = 0
       end
     end
-    [colored_pegs, white_pegs]
+    count
   end
 
   def generate_random_code
     code = [0, 0, 0, 0]
     code = code.map { rand(1..6).to_s }
-    p code
     code
   end
 
@@ -110,6 +122,7 @@ class Human < Player
     puts 'Colored pegs mean you have the correct number and placement'
     puts 'White pegs mean correct number but incorrect placement'
   end
+
   def process_results(results)
     puts "Colored pegs: #{results[0]}"
     puts "White pegs: #{results[1]}"
@@ -131,7 +144,7 @@ class Comp < Player
   end
 
   def input
-    p @found_numbers
+    sleep(0.5) # computer thinking
     guess = if @all_white_pegs_found
               random_guessing
             else
