@@ -4,7 +4,7 @@ class Game
     puts "To play as the codebreaker type '1'."
     puts 'To make your own code type literally anything else'
     choice = gets.chomp
-    choice == 1 ? human_breaker_setup : comp_breaker_setup
+    choice == '1' ? human_breaker_setup : comp_breaker_setup
   end
 
   def play_game
@@ -119,6 +119,9 @@ end
 
 # A computer player
 class Comp < Player
+  def show_instructions
+    puts "The computer will now try to guess your code. Good Luck!"
+  end
 end
 
 x = Game.new
