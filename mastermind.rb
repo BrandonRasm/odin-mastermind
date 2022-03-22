@@ -24,7 +24,7 @@ class Game
   def play_round
     input = @player.input
     results = check_guess(input)
-    display_results(results)
+    @player.process_results(results)
     win = results[0] == 4
   end
 
@@ -43,11 +43,6 @@ class Game
       end
     end
     [colored_pegs, white_pegs]
-  end
-
-  def display_results(results)
-    puts "Colored pegs: #{results[0]}"
-    puts "White pegs: #{results[1]}"
   end
 
   def generate_random_code
@@ -115,12 +110,37 @@ class Human < Player
     puts 'Colored pegs mean you have the correct number and placement'
     puts 'White pegs mean correct number but incorrect placement'
   end
+
+  def process_results(results)
+    puts "Colored pegs: #{results[0]}"
+    puts "White pegs: #{results[1]}"
+  end
 end
 
 # A computer player
 class Comp < Player
+  def initialize
+    @recent_number_checked = 0
+    @found_numbers = [0, 0, 0, 0]
+    @all_white_pegs_found = false
+    @recent_guesses = []
+    super
+  end
+
   def show_instructions
-    puts "The computer will now try to guess your code. Good Luck!"
+    puts 'The computer will now try to guess your code. Good Luck!'
+  end
+
+  def process_results(results)
+    unless all_white_pegs_found
+      # results[1] will be the count of white pegs from recent guess
+      # replaces first instance of a 0 in foundnumbers array with recent_number_checked that many times
+      results[1].times do
+        found_numbers[found_numbers.index(0)] = recent_number_checked
+      end
+    end
+
+    all_white_pegs_found = !found_numbers.include?(0)
   end
 end
 
